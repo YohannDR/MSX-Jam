@@ -3,7 +3,6 @@
 #include "input.h"
 #include "color.h"
 #include "string.h"
-#include "scroll.h"
 
 // Actions id
 enum PlayerPose
@@ -138,27 +137,25 @@ static void PlayerHandleInputs(struct Entity* self)
 
     if (Keyboard_IsKeyPressed(KEY_LEFT))
     {
-        self->position.x--;
+        self->position.x -= 2;
         self->status |= ESTATUS_FACING_LEFT;
         moving = TRUE;
-        Scroll_SetOffsetH(-1);
     }
     else if (Keyboard_IsKeyPressed(KEY_RIGHT))
     {
-        self->position.x++;
+        self->position.x += 2;
         self->status &= ~ESTATUS_FACING_LEFT;
         moving = TRUE;
-        Scroll_SetOffsetH(1);
     }
 
     if (Keyboard_IsKeyPressed(KEY_UP))
     {
-        self->position.y--;
+        self->position.y -= 2;
         moving = TRUE;
     }
     else if (Keyboard_IsKeyPressed(KEY_DOWN))
     {
-        self->position.y++;
+        self->position.y += 2;
         moving = TRUE;
     }
 

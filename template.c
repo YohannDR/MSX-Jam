@@ -14,10 +14,10 @@
 #include "math.h"
 #include "debug.h"
 #include "string.h"
-#include "scroll.h"
 
 #include "entity.h"
 #include "player.h"
+#include "scrolling.h"
 
 // Prototypes
 bool State_Initialize();
@@ -77,20 +77,20 @@ bool State_Initialize()
 	Print_SetColor(0xF, 0x1);
 	Print_SetPosition(0, 0);
 
+	/*
 	// Initialize color
 	VDP_FillVRAM(0xF0, g_ScreenColorLow, 0, 32); // Clear color
 	VDP_Poke_16K(0x7F, g_ScreenColorLow + 0);
 	VDP_Poke_16K(0x5F, g_ScreenColorLow + 1);
 	VDP_Poke_16K(0xF5, g_ScreenColorLow + 2);
 	VDP_Poke_16K(0x99, g_ScreenColorLow + 3);
+	*/
 
 	// Load tiles pattern
 	VDP_LoadPattern_GM2(g_DataMapGM2_Patterns, 94, 0);
 	VDP_LoadColor_GM2(g_DataMapGM2_Colors, 94, 0);
-	
-	// Initialize scroll module
-	u8 sprt = Scroll_Initialize((u16)g_DataMapGM2_Names);
-	Scroll_SetOffsetV(16);
+
+	ScrollInit(g_DataMapGM2_Names);
 
 	// Initialize sprite
 	VDP_SetSpriteFlag(VDP_SPRITE_SIZE_16);
@@ -106,10 +106,8 @@ bool State_Initialize()
 	VDP_LoadSpritePattern(g_DataSprtBall,          4*4*14, 4*2*3);
 	// VDP_SetSpriteSM1(6, 0, 208, 0, 0); // hide
 
-
 	EntitiesSetup();
 	EntityInit(ENTITY_PLAYER, 16, 128);
-	EntityInit(ENTITY_BALL, 16, 50);
 
 	VDP_EnableDisplay(TRUE);
 
@@ -127,20 +125,23 @@ bool State_Game()
 {
 	PROFILE_FRAME_START();
 
-	PROFILE_SECTION_START(S_DRAW, 100);
-	EntitiesDraw();
-	PROFILE_SECTION_END(S_DRAW, 100);
-
 	PROFILE_SECTION_START(S_UPDATE, 100);
 	EntitiesUpdate();
 	PROFILE_SECTION_END(S_UPDATE, 100);
+
 
 	PROFILE_SECTION_START(S_INPUT, 100);
 	PROFILE_SECTION_END(S_INPUT, 100);
 
 	PROFILE_FRAME_END();
 
-	Scroll_Update();
+	Halt(); // Wait V-Blank
+
+	ScrollUpdate();
+
+	PROFILE_SECTION_START(S_DRAW, 100);
+	EntitiesDraw();
+	PROFILE_SECTION_END(S_DRAW, 100);
 
 	return TRUE; // Frame finished
 }

@@ -9,8 +9,9 @@
 enum EntityStatus
 {
 	ESTATUS_EXISTS = 1 << 0,
-	ESTATUS_NOT_DRAWN = 1 << 1,
-	ESTATUS_FACING_LEFT = 1 << 2,
+	ESTATUS_ON_SCREEN = 1 << 1,
+	ESTATUS_NOT_DRAWN = 1 << 2,
+	ESTATUS_FACING_LEFT = 1 << 3,
 };
 
 struct Entity
@@ -19,13 +20,13 @@ struct Entity
 	u8 status;
 	u8 pose;
     u8 entityId;
+	u8 gfxSlot;
 	Game_Pawn pawn;
 };
 
 enum EntityId
 {
     ENTITY_PLAYER,
-    ENTITY_BALL,
 
 	ENTITY_COUNT
 };
