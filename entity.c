@@ -6,6 +6,7 @@
 
 #include "player.h"
 #include "bullet.h"
+#include "shooter.h"
 #include "scrolling.h"
 
 struct Entity gEntities[ENTITY_AMOUNT];
@@ -14,7 +15,8 @@ static u8 gNextOamSlot;
 
 const EntityUpdateFunc sEntitiesAiPointers[ENTITY_COUNT] = {
     [ENTITY_PLAYER] = Player,
-    [ENTITY_BULLET] = Bullet
+    [ENTITY_BULLET] = Bullet,
+    [ENTITY_SHOOTER] = Shooter
 };
 
 static void EntityUpdateAnimation(struct Entity* e)
@@ -33,8 +35,14 @@ static void EntityUpdateAnimation(struct Entity* e)
 
 static void EntityDraw(struct Entity* e)
 {
-    u8 x = e->position.x - ScrollGetX();
-    u8 y = e->position.y - ScrollGetY() - 1;
+    u8 x = e->position.x;
+    u8 y = e->position.y;
+
+    if (!(e->status & ESTATUS_ABSOLUTE_POSITION))
+    {
+        x -= ScrollGetX();
+        y -= ScrollGetY() - 1;
+    }
 
     const u8* frame = e->frameData[e->caf].frame;
     u8 partCount = *frame++;
@@ -53,9 +61,15 @@ static void EntityDraw(struct Entity* e)
 
 static void EntityCheckOnScreen(struct Entity* e)
 {
-    c8 buffer[50];
-    u16 screenX = ScrollGetX();
-    u16 screenY = ScrollGetY();
+    u16 screenX = 0;
+    u16 screenY = 0;
+
+    if (!(e->status & ESTATUS_ABSOLUTE_POSITION))
+    {
+        screenX = ScrollGetX();
+        screenY = ScrollGetY();
+    }
+
     u16 entityX = e->position.x;
     u16 entityY = e->position.y;
 
@@ -65,7 +79,7 @@ static void EntityCheckOnScreen(struct Entity* e)
         return;
     }
 
-    if (entityX < screenX + 0xFF && entityY < screenY + 0xFF)
+    if (entityX < screenX + 0xFF && entityY < screenY + 0xF0)
     {
         e->status |= ESTATUS_ON_SCREEN;
         return;

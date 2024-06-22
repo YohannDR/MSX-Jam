@@ -12,6 +12,8 @@ enum EntityStatus
 	ESTATUS_ON_SCREEN = 1 << 1,
 	ESTATUS_NOT_DRAWN = 1 << 2,
 	ESTATUS_FACING_LEFT = 1 << 3,
+	ESTATUS_FACING_UP = 1 << 4,
+	ESTATUS_ABSOLUTE_POSITION = 1 << 5,
 };
 
 struct FrameData
@@ -27,9 +29,10 @@ struct Entity
 	u8 pose;
     u8 entityId;
 	u8 subTypeId;
-	u8 timer;
 	u8 adc; // Animation duration counter
 	u8 caf; // Current animation frame
+	u8 work0;
+	u16 timer;
 	const struct FrameData* frameData;
 };
 
@@ -37,6 +40,7 @@ enum EntityId
 {
     ENTITY_PLAYER,
     ENTITY_BULLET,
+    ENTITY_SHOOTER,
 
 	ENTITY_COUNT
 };

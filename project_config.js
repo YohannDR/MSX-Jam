@@ -34,7 +34,7 @@ ProjModules = [ ProjName ];
 LibModules = [ "system", "bios", "vdp", "print", "input", "memory", "game", "game_pawn", "math", "string", "debug", "scroll" ];
 
 //-- Additional sources to be compiled and linked with the project (array)
-AddSources = [ "entity.c", "player.c", "scrolling.c", "bullet.c" ];
+AddSources = [ "entity.c", "player.c", "scrolling.c", "bullet.c", "shooter.c" ];
 
 //-- Target MSX machine version (string)
 //   - 1        MSX1

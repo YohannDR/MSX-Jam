@@ -9,40 +9,41 @@ enum BulletPose
     BULLET_POSE_EXPLODING,
 };
 
-static const u8 sPlayerIdleLeft_Frame0[] = {
+static const u8 sBulletIdleLeft_Frame0[] = {
     2,
     0, 0, 4*16,
     0, 0, 4*16+8,
 };
 
-static const u8 sPlayerIdleLeft_Frame1[] = {
+static const u8 sBulletIdleLeft_Frame1[] = {
     2,
     0, 0, 2*16,
     0, 0, 2*16+8,
 };
 
-static const struct FrameData sPlayerIdleLeft[] = {
-    { sPlayerIdleLeft_Frame0, 4 },
-    { sPlayerIdleLeft_Frame1, 4 },
+static const struct FrameData sBulletIdleLeft[] = {
+    { sBulletIdleLeft_Frame0, 4 },
+    { sBulletIdleLeft_Frame1, 4 },
     { NULL, 0 }
 };
 
 static const struct FrameData* const sBulletFrameData[] =
 {
-    [BULLET_RIGHT] = sPlayerIdleLeft,
-    [BULLET_TOP_RIGHT] = sPlayerIdleLeft,
-    [BULLET_TOP] = sPlayerIdleLeft,
-    [BULLET_TOP_LEFT] = sPlayerIdleLeft,
-    [BULLET_LEFT] = sPlayerIdleLeft,
-    [BULLET_BOTTOM_LEFT] = sPlayerIdleLeft,
-    [BULLET_BOTTOM] = sPlayerIdleLeft,
-    [BULLET_BOTTOM_RIGHT] = sPlayerIdleLeft,
+    [BULLET_RIGHT] = sBulletIdleLeft,
+    [BULLET_TOP_RIGHT] = sBulletIdleLeft,
+    [BULLET_TOP] = sBulletIdleLeft,
+    [BULLET_TOP_LEFT] = sBulletIdleLeft,
+    [BULLET_LEFT] = sBulletIdleLeft,
+    [BULLET_BOTTOM_LEFT] = sBulletIdleLeft,
+    [BULLET_BOTTOM] = sBulletIdleLeft,
+    [BULLET_BOTTOM_RIGHT] = sBulletIdleLeft,
 };
 
 static void BulletInit(struct Entity* self)
 {
     EntitySetFrameData(self, sBulletFrameData[self->subTypeId]);
     self->pose = BULLET_POSE_MOVING;
+    self->status |= ESTATUS_ABSOLUTE_POSITION;
 }
 
 static void BulletMoving(struct Entity* self)
