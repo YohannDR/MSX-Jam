@@ -17,6 +17,7 @@
 
 #include "entity.h"
 #include "player.h"
+#include "bullet.h"
 #include "scrolling.h"
 
 // Prototypes
@@ -107,7 +108,17 @@ bool State_Initialize()
 	// VDP_SetSpriteSM1(6, 0, 208, 0, 0); // hide
 
 	EntitiesSetup();
-	EntityInit(ENTITY_PLAYER, 16, 128);
+
+	EntityInit(ENTITY_PLAYER, 0, 80, 60);
+	EntityInit(ENTITY_BULLET, BULLET_RIGHT, 80, 60);
+	EntityInit(ENTITY_BULLET, BULLET_TOP_RIGHT, 80, 60);
+	EntityInit(ENTITY_BULLET, BULLET_TOP, 80, 60);
+	EntityInit(ENTITY_BULLET, BULLET_TOP_LEFT, 80, 60);
+	EntityInit(ENTITY_BULLET, BULLET_LEFT, 80, 60);
+	EntityInit(ENTITY_BULLET, BULLET_BOTTOM_LEFT, 80, 60);
+	EntityInit(ENTITY_BULLET, BULLET_BOTTOM, 80, 60);
+	EntityInit(ENTITY_BULLET, BULLET_BOTTOM_RIGHT, 80, 60);
+	
 
 	VDP_EnableDisplay(TRUE);
 
@@ -129,8 +140,11 @@ bool State_Game()
 	EntitiesUpdate();
 	PROFILE_SECTION_END(S_UPDATE, 100);
 
-
 	PROFILE_SECTION_START(S_INPUT, 100);
+	if (Keyboard_IsKeyPressed(KEY_SPACE))
+	{
+		EntityInit(ENTITY_BULLET, BULLET_RIGHT, 64, 128);
+	}
 	PROFILE_SECTION_END(S_INPUT, 100);
 
 	PROFILE_FRAME_END();
@@ -158,7 +172,7 @@ bool State_Pause()
 //=============================================================================
 
 //-----------------------------------------------------------------------------
-// Programme entry point
+// Program entry point
 void main()
 {
 	DEBUG_INIT();

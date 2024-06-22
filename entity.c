@@ -5,22 +5,50 @@
 #include "vdp.h"
 
 #include "player.h"
+#include "bullet.h"
 #include "scrolling.h"
 
 struct Entity gEntities[ENTITY_AMOUNT];
 
+static u8 gNextOamSlot;
+
 const EntityUpdateFunc sEntitiesAiPointers[ENTITY_COUNT] = {
-    [ENTITY_PLAYER] = Player
+    [ENTITY_PLAYER] = Player,
+    [ENTITY_BULLET] = Bullet
 };
+
+static void EntityUpdateAnimation(struct Entity* e)
+{
+    e->adc++;
+
+    if (e->frameData[e->caf].duration < e->adc)
+    {
+        e->caf++;
+        e->adc = 0;
+
+        if (e->frameData[e->caf].duration == 0)
+            e->caf = 0;
+    }
+}
 
 static void EntityDraw(struct Entity* e)
 {
-    GamePawn_Draw(&e->pawn);
-}
+    u8 x = e->position.x - ScrollGetX();
+    u8 y = e->position.y - ScrollGetY() - 1;
 
-static void EntitySetPawnPosition(struct Entity* e)
-{
-    GamePawn_SetPosition(&e->pawn, e->position.x - ScrollGetX(), e->position.y - ScrollGetY());
+    const u8* frame = e->frameData[e->caf].frame;
+    u8 partCount = *frame++;
+
+    for (u8 i = 0; i < partCount; i++)
+    {
+        u8 yOffset = *frame++;
+        u8 xOffset = *frame++;
+        u8 pattern = *frame++;
+
+        VDP_SetSprite(gNextOamSlot + i, x + xOffset, y + yOffset, pattern);
+    }
+
+    gNextOamSlot += partCount;
 }
 
 static void EntityCheckOnScreen(struct Entity* e)
@@ -31,28 +59,22 @@ static void EntityCheckOnScreen(struct Entity* e)
     u16 entityX = e->position.x;
     u16 entityY = e->position.y;
 
-    String_Format(buffer, "Entity : %i ; %i | Screen : %i ; %i", entityX, entityY, screenX, screenY);
-    DEBUG_LOG(buffer);
-
     if (entityX < screenX || entityY < screenY)
     {
-        DEBUG_LOG("Off screen (behind)");
         e->status &= ~ESTATUS_ON_SCREEN;
         return;
     }
 
     if (entityX < screenX + 0xFF && entityY < screenY + 0xFF)
     {
-        DEBUG_LOG("On screen");
         e->status |= ESTATUS_ON_SCREEN;
         return;
     }
 
-    DEBUG_LOG("Off screen (elsewhere)");
     e->status &= ~ESTATUS_ON_SCREEN;
 }
 
-struct Entity* EntityInit(enum EntityId entityId, u16 x, u16 y)
+struct Entity* EntityInit(enum EntityId entityId, u8 subTypeId, u16 x, u16 y)
 {
     for (u32 i = 0; i < ENTITY_AMOUNT; i++)
     {
@@ -65,12 +87,11 @@ struct Entity* EntityInit(enum EntityId entityId, u16 x, u16 y)
         e->position.x = x;
         e->position.y = y;
         e->entityId = entityId;
+        e->subTypeId = subTypeId;
 
         e->pose = 0;
 
         sEntitiesAiPointers[entityId](e);
-
-        EntitySetPawnPosition(e);
 
         return e;
     }
@@ -91,6 +112,13 @@ struct Entity* EntityFind(enum EntityId entityId)
     return NULL;
 }
 
+void EntitySetFrameData(struct Entity* e, const struct FrameData* frameData)
+{
+    e->frameData = frameData;
+    e->adc = 0;
+    e->caf = 0;
+}
+
 void EntitiesSetup(void)
 {
     Mem_Set(0, gEntities, sizeof(gEntities));
@@ -98,7 +126,9 @@ void EntitiesSetup(void)
 
 void EntitiesDraw(void)
 {
-    VDP_DisableSpritesFrom(0);
+    // VDP_DisableSpritesFrom(0);
+    gNextOamSlot = 0;
+
     for (u32 i = 0; i < ENTITY_AMOUNT; i++)
     {
         struct Entity* e = &gEntities[i];
@@ -128,8 +158,6 @@ void EntitiesUpdate(void)
         sEntitiesAiPointers[e->entityId](e);
 
         EntityCheckOnScreen(e);
-
-        EntitySetPawnPosition(e);
-        GamePawn_Update(&e->pawn);
+        EntityUpdateAnimation(e);
     }
 }

@@ -14,19 +14,29 @@ enum EntityStatus
 	ESTATUS_FACING_LEFT = 1 << 3,
 };
 
+struct FrameData
+{
+	const u8* frame;
+	u8 duration;
+};
+
 struct Entity
 {
     VectorU16 position;
 	u8 status;
 	u8 pose;
     u8 entityId;
-	u8 gfxSlot;
-	Game_Pawn pawn;
+	u8 subTypeId;
+	u8 timer;
+	u8 adc; // Animation duration counter
+	u8 caf; // Current animation frame
+	const struct FrameData* frameData;
 };
 
 enum EntityId
 {
     ENTITY_PLAYER,
+    ENTITY_BULLET,
 
 	ENTITY_COUNT
 };
@@ -37,8 +47,10 @@ extern struct Entity gEntities[ENTITY_AMOUNT];
 
 extern const EntityUpdateFunc sEntitiesAiPointers[ENTITY_COUNT];
 
-struct Entity* EntityInit(enum EntityId entityId, u16 x, u16 y);
+struct Entity* EntityInit(enum EntityId entityId, u8 subTypeId, u16 x, u16 y);
 struct Entity* EntityFind(enum EntityId entityId);
+
+void EntitySetFrameData(struct Entity* e, const struct FrameData* frameData);
 
 void EntitiesSetup(void);
 void EntitiesDraw(void);

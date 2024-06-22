@@ -9,126 +9,69 @@ enum PlayerPose
 {
 	PLAYER_POSE_IDLE = 1,
 	PLAYER_POSE_MOVE,
-	PLAYER_POSE_JUMP,
-	PLAYER_POSE_FALL,
 };
 
 #pragma region Data
 
-// Player's sprite layers
-// This character is made by 3 layers (3 sprites) but the first two are special: One is only visible on even frames while the second only on odd frames.
-// So, on the 3 layers, only two are visible at a given frame. The blinking of the first two black layers is done to create shaded colors.
-// The counterpart is the flickering effect. The character white color comes from the background and is not in a sprite.
-static const Game_Sprite sPlayerLayers[] =
-{
-//	  Sprite ID
-//    |  X offset from pawn's position
-//    |  |  Y offset
-//    |  |  |  Pattern offset from current animation key
-//    |  |  |  |   Layer's color
-//    |  |  |  |   |                Layer option
-	{ 0, 0, 0, 0,  COLOR_BLACK,     PAWN_SPRITE_EVEN }, // Only visible on even frame number
-	{ 0, 0, 0, 12, COLOR_BLACK,     PAWN_SPRITE_ODD }, // Only visible on odd frame number
-	{ 4, 0, 0, 8,  COLOR_LIGHT_RED, 0 },
+static const u8 sPlayerIdleRight_Frame0[] = {
+    2,
+    0, 0, 4*16 + 7*16,
+    0, 0, 4*16 + 7*16 + 8,
 };
 
-// Idle animation frames
-// Each line describes an animation key
-static const Game_Frame sIdleLeft[] =
-{
-//	  Pattern offset of this animation key in the sprite data
-//    |     Animation key duration (in frame number)
-//    |     |   Event to trigger during this animation key (function pointer)
-	{ 4*16,	64,	NULL },
-	{ 2*16,	24,	NULL },
+static const u8 sPlayerIdleRight_Frame1[] = {
+    2,
+    0, 0, 2*16 + 7*16,
+    0, 0, 2*16 + 7*16 + 8,
 };
 
-// Move animation frames
-static const Game_Frame sMoveLeft[] =
-{
-	{ 0*16,	4,	NULL },
-	{ 1*16,	4,	NULL },
-	{ 2*16,	4,	NULL },
-	{ 3*16,	4,	NULL },
+static const struct FrameData sPlayerIdleRight[] = {
+    { sPlayerIdleRight_Frame0, 64 },
+    { sPlayerIdleRight_Frame1, 24 },
+    { NULL, 0 }
 };
 
-// Jump animation frames
-static const Game_Frame sJumpLeft[] =
-{
-	{ 5*16,	4,	NULL },
+static const u8 sPlayerMoveRight_Frame0[] = {
+    2,
+    0, 0, 0*16 + 7*16,
+    0, 0, 0*16 + 7*16 + 8,
 };
 
-// Fall animation frames
-static const Game_Frame sFallLeft[] =
-{
-	{ 6*16,	4,	NULL },
+static const u8 sPlayerMoveRight_Frame1[] = {
+    2,
+    0, 0, 1*16 + 7*16,
+    0, 0, 1*16 + 7*16 + 8,
 };
 
-// List of all player actions
-static const Game_Action sAnimActionsLeft[] =
-{ //  Frames        Number                  Loop?  Interrupt?
-	[PLAYER_POSE_IDLE] = { sIdleLeft, numberof(sIdleLeft), TRUE,  TRUE },
-	[PLAYER_POSE_MOVE] = { sMoveLeft, numberof(sMoveLeft), TRUE,  TRUE },
-	[PLAYER_POSE_JUMP] = { sJumpLeft, numberof(sJumpLeft), TRUE,  TRUE },
-	[PLAYER_POSE_FALL] = { sFallLeft, numberof(sFallLeft), TRUE,  TRUE },
+static const u8 sPlayerMoveRight_Frame2[] = {
+    2,
+    0, 0, 2*16 + 7*16,
+    0, 0, 2*16 + 7*16 + 8,
 };
 
-//.............................................................................
-// Player 2 data
-
-// Idle animation frames
-static const Game_Frame sIdleRight[] =
-{
-	{ 4*16+7*16,	64,	NULL },
-	{ 2*16+7*16,	24,	NULL },
+static const u8 sPlayerMoveRight_Frame3[] = {
+    2,
+    0, 0, 3*16 + 7*16,
+    0, 0, 3*16 + 7*16 + 8,
 };
 
-// Move animation frames
-static const Game_Frame sMoveRight[] =
-{
-	{ 0*16+7*16,	4,	NULL },
-	{ 1*16+7*16,	4,	NULL },
-	{ 2*16+7*16,	4,	NULL },
-	{ 3*16+7*16,	4,	NULL },
-};
-
-// Jump animation frames
-static const Game_Frame sJumpRight[] =
-{
-	{ 5*16+7*16,	4,	NULL },
-};
-
-// Fall animation frames
-static const Game_Frame sFallRight[] =
-{
-	{ 6*16+7*16,	4,	NULL },
-};
-
-// List of all player actions
-static const Game_Action sAnimActionsRight[] =
-{ //  Frames        Number                  Loop?  Interrupt?
-	[PLAYER_POSE_IDLE] = { sIdleRight, numberof(sIdleRight), TRUE,  TRUE },
-	[PLAYER_POSE_MOVE] = { sMoveRight, numberof(sMoveRight), TRUE,  TRUE },
-	[PLAYER_POSE_JUMP] = { sJumpRight, numberof(sJumpRight), TRUE,  TRUE },
-	[PLAYER_POSE_FALL] = { sFallRight, numberof(sFallRight), TRUE,  TRUE },
+static const struct FrameData sPlayerMoveRight[] = {
+    { sPlayerMoveRight_Frame0, 4 },
+    { sPlayerMoveRight_Frame1, 4 },
+    { sPlayerMoveRight_Frame2, 4 },
+    { sPlayerMoveRight_Frame3, 4 },
+    { NULL, 0 }
 };
 
 #pragma endregion
 
 static void PlayerSetPose(struct Entity* self, enum PlayerPose pose)
 {
+    if (self->pose == pose)
+        return;
+
     self->pose = pose;
-    GamePawn_SetAction(&self->pawn, pose);
-}
-
-static void PlayerSetDirection(struct Entity* self)
-{
-    Game_Pawn* pawn = &self->pawn;
-
-    if (self->status & ESTATUS_FACING_LEFT)
-        pawn->ActionList = sAnimActionsLeft;
-    else
-        pawn->ActionList = sAnimActionsRight;
+    EntitySetFrameData(self, pose == PLAYER_POSE_MOVE ? sPlayerMoveRight : sPlayerIdleRight);
 }
 
 static void PlayerHandleInputs(struct Entity* self)
@@ -138,13 +81,11 @@ static void PlayerHandleInputs(struct Entity* self)
     if (Keyboard_IsKeyPressed(KEY_LEFT))
     {
         self->position.x -= 2;
-        self->status |= ESTATUS_FACING_LEFT;
         moving = TRUE;
     }
     else if (Keyboard_IsKeyPressed(KEY_RIGHT))
     {
         self->position.x += 2;
-        self->status &= ~ESTATUS_FACING_LEFT;
         moving = TRUE;
     }
 
@@ -160,16 +101,18 @@ static void PlayerHandleInputs(struct Entity* self)
     }
 
     if (moving)
+    {
         PlayerSetPose(self, PLAYER_POSE_MOVE);
+    }
     else
+    {
         PlayerSetPose(self, PLAYER_POSE_IDLE);
+    }
 }
 
 static void PlayerInit(struct Entity* self)
 {
-    Game_Pawn* pawn = &self->pawn;
-
-	GamePawn_Initialize(pawn, sPlayerLayers, numberof(sPlayerLayers), 0, sAnimActionsRight);
+    EntitySetFrameData(self, sPlayerIdleRight);
     PlayerSetPose(self, PLAYER_POSE_IDLE);
 }
 
@@ -185,9 +128,6 @@ static void PlayerMoving(struct Entity* self)
 
 void Player(struct Entity* self)
 {
-    if (self->pose != 0)
-        PlayerSetDirection(self);
-
     switch (self->pose)
     {
         case 0:
@@ -201,8 +141,5 @@ void Player(struct Entity* self)
         case PLAYER_POSE_MOVE:
             PlayerMoving(self);
             break;
-
-        case PLAYER_POSE_JUMP:
-        case PLAYER_POSE_FALL:
     }
 }
