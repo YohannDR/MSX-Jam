@@ -38,6 +38,8 @@ bool State_Pause();
 #include "content/data_sprt_ball.h"
 #include "content/data_bg.h"
 #include "content/data_map_gm2.h"
+#include "content/level.h"
+#include "content/tileset.h"
 
 #include "content/lvl_music.h"
 #include "content/menu_music.h"
@@ -90,10 +92,10 @@ bool State_Initialize()
 	*/
 
 	// Load tiles pattern
-	VDP_LoadPattern_GM2(g_DataMapGM2_Patterns, 94, 0);
+	VDP_LoadPattern_GM2(sTilesetGfx, 94, 0);
 	VDP_LoadColor_GM2(g_DataMapGM2_Colors, 94, 0);
 
-	ScrollInit(g_DataMapGM2_Names);
+	ScrollInit(sLevel);
 
 	// Initialize sprite
 	VDP_SetSpriteFlag(VDP_SPRITE_SIZE_16);
@@ -115,8 +117,7 @@ bool State_Initialize()
 	EntitiesSetup();
 
 	EntityInit(ENTITY_PLAYER1, 0, 128, 50);
-	EntityInit(ENTITY_PLAYER2, 0, 128, 40);
-	EntityInit(ENTITY_BOOMERANG, 0, 0xF8, 10);
+	EntityInit(ENTITY_PLAYER2, 0, 0, 0);
 	// EntityInit(ENTITY_SHOOTER, SHOOTER_HORIZONTAL, 0, 0);
 
 	VDP_EnableDisplay(TRUE);

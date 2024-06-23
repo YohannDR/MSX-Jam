@@ -38,17 +38,17 @@ static void BoomerangMove(struct Entity* self)
         case 0:
             self->position.y += 2;
 
-            if (self->position.y > 0x98)
+            if (self->position.y > 60)
                 self->work0 = 1;
             break;
 
         case 1:
             self->position.y -= 2;
 
-            u8 xSpeed = 1;
+            u8 xSpeed = 2;
 
             if (gFrameCounter % 2)
-                xSpeed = 2;
+                xSpeed = 3;
 
             if (self->status & ESTATUS_FACING_LEFT)
                 self->position.x -= xSpeed;
