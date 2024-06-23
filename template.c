@@ -40,6 +40,7 @@ bool State_Pause();
 #include "content/data_map_gm2.h"
 
 #include "content/lvl_music.h"
+#include "content/menu_music.h"
 
 //-----------------------------------------------------------------------------
 // Load pattern data into VRAM
@@ -57,6 +58,8 @@ void VDP_LoadSpritePattern16_VSym(const u8* src, u8 index, u8 count)
 		VDP_Poke_16K(val, addr);
 	}
 }
+
+u8 gSfxId;
 
 //-----------------------------------------------------------------------------
 //
@@ -106,6 +109,7 @@ bool State_Initialize()
 	VDP_LoadSpritePattern(g_DataSprtBall,          4*4*14, 4*2*3);
 	// VDP_SetSpriteSM1(6, 0, 208, 0, 0); // hide
 
+	Mem_Copy(sLevelMusic, 0xD000, sizeof(sLevelMusic));
 	AKG_Init(sLevelMusic, 0);
 
 	EntitiesSetup();
