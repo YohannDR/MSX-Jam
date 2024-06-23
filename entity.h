@@ -14,6 +14,7 @@ enum EntityStatus
 	ESTATUS_FACING_LEFT = 1 << 3,
 	ESTATUS_FACING_UP = 1 << 4,
 	ESTATUS_ABSOLUTE_POSITION = 1 << 5,
+	ESTATUS_INVINCIBLE = 1 << 6,
 };
 
 struct FrameData
@@ -31,16 +32,29 @@ struct Entity
 	u8 subTypeId;
 	u8 adc; // Animation duration counter
 	u8 caf; // Current animation frame
+	u8 health;
+	i8 hitboxTop;
+	i8 hitboxBottom;
+	i8 hitboxLeft;
+	i8 hitboxRight;
 	u8 work0;
 	u16 timer;
 	const struct FrameData* frameData;
 };
 
+struct EntityStats
+{
+	u8 spawnHealth;
+	u8 damage;
+};
+
 enum EntityId
 {
-    ENTITY_PLAYER,
+    ENTITY_PLAYER1,
+    ENTITY_PLAYER2,
     ENTITY_BULLET,
     ENTITY_SHOOTER,
+    ENTITY_BOOMERANG,
 
 	ENTITY_COUNT
 };
@@ -48,8 +62,10 @@ enum EntityId
 typedef void (*EntityUpdateFunc)(struct Entity*);
 
 extern struct Entity gEntities[ENTITY_AMOUNT];
+extern u16 gFrameCounter;
 
 extern const EntityUpdateFunc sEntitiesAiPointers[ENTITY_COUNT];
+extern const struct EntityStats sEntitiesStats[ENTITY_COUNT];
 
 struct Entity* EntityInit(enum EntityId entityId, u8 subTypeId, u16 x, u16 y);
 struct Entity* EntityFind(enum EntityId entityId);

@@ -16,7 +16,7 @@
 #include "string.h"
 
 #include "entity.h"
-#include "player.h"
+#include "player1.h"
 #include "bullet.h"
 #include "shooter.h"
 #include "scrolling.h"
@@ -110,8 +110,8 @@ bool State_Initialize()
 
 	EntitiesSetup();
 
-	EntityInit(ENTITY_PLAYER, 0, 80, 60);
-	EntityInit(ENTITY_SHOOTER, SHOOTER_VERTICAL, 0xF0, 0);
+	EntityInit(ENTITY_PLAYER1, 0, 80, 60);
+	EntityInit(ENTITY_SHOOTER, SHOOTER_VERTICAL, 0xF0, 20);
 	// EntityInit(ENTITY_SHOOTER, SHOOTER_HORIZONTAL, 0, 0);
 
 	VDP_EnableDisplay(TRUE);

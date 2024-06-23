@@ -1,8 +1,12 @@
-#include "player.h"
+#include "player1.h"
 #include "debug.h"
 #include "input.h"
 #include "color.h"
 #include "string.h"
+
+#include "bullet.h"
+
+#define PLAYER_SHOOT_DELAY 32
 
 // Actions id
 enum PlayerPose
@@ -65,7 +69,7 @@ static const struct FrameData sPlayerMoveRight[] = {
 
 #pragma endregion
 
-static void PlayerSetPose(struct Entity* self, enum PlayerPose pose)
+static void Player1SetPose(struct Entity* self, enum PlayerPose pose)
 {
     if (self->pose == pose)
         return;
@@ -74,9 +78,25 @@ static void PlayerSetPose(struct Entity* self, enum PlayerPose pose)
     EntitySetFrameData(self, pose == PLAYER_POSE_MOVE ? sPlayerMoveRight : sPlayerIdleRight);
 }
 
-static void PlayerHandleInputs(struct Entity* self)
+static void Player1Init(struct Entity* self)
+{
+    EntitySetFrameData(self, sPlayerIdleRight);
+    Player1SetPose(self, PLAYER_POSE_IDLE);
+
+    self->timer = 0;
+
+    self->hitboxTop = -4;
+    self->hitboxBottom = 4;
+    self->hitboxLeft = -4;
+    self->hitboxRight = 4;
+}
+
+static void Player1HandleInputs(struct Entity* self)
 {
     u8 moving = FALSE;
+
+    if (self->timer != 0)
+        self->timer--;
 
     if (Keyboard_IsKeyPressed(KEY_LEFT))
     {
@@ -88,6 +108,12 @@ static void PlayerHandleInputs(struct Entity* self)
         self->position.x += 2;
         moving = TRUE;
     }
+
+    /*if (self->timer == 0 && Keyboard_IsKeyPressed(KEY_UP))
+    {
+        EntityInit(ENTITY_BULLET, BULLET_TOP, self->position.x, self->position.y);
+        self->timer = PLAYER_SHOOT_DELAY;
+    }*/
 
     if (Keyboard_IsKeyPressed(KEY_UP))
     {
@@ -102,44 +128,38 @@ static void PlayerHandleInputs(struct Entity* self)
 
     if (moving)
     {
-        PlayerSetPose(self, PLAYER_POSE_MOVE);
+        Player1SetPose(self, PLAYER_POSE_MOVE);
     }
     else
     {
-        PlayerSetPose(self, PLAYER_POSE_IDLE);
+        Player1SetPose(self, PLAYER_POSE_IDLE);
     }
 }
 
-static void PlayerInit(struct Entity* self)
+static void Player1Idle(struct Entity* self)
 {
-    EntitySetFrameData(self, sPlayerIdleRight);
-    PlayerSetPose(self, PLAYER_POSE_IDLE);
+    Player1HandleInputs(self);
 }
 
-static void PlayerIdle(struct Entity* self)
+static void Player1Moving(struct Entity* self)
 {
-    PlayerHandleInputs(self);
+    Player1HandleInputs(self);
 }
 
-static void PlayerMoving(struct Entity* self)
-{
-    PlayerHandleInputs(self);
-}
-
-void Player(struct Entity* self)
+void Player1(struct Entity* self)
 {
     switch (self->pose)
     {
         case 0:
-            PlayerInit(self);
+            Player1Init(self);
             break;
 
         case PLAYER_POSE_IDLE:
-            PlayerIdle(self);
+            Player1Idle(self);
             break;
 
         case PLAYER_POSE_MOVE:
-            PlayerMoving(self);
+            Player1Moving(self);
             break;
     }
 }

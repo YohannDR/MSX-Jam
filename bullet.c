@@ -2,6 +2,7 @@
 #include "color.h"
 
 #define BULLET_SPEED 4
+#define BULLET_SPAWN_INVINCIBILITY_DURATION 16
 
 enum BulletPose
 {
@@ -43,11 +44,26 @@ static void BulletInit(struct Entity* self)
 {
     EntitySetFrameData(self, sBulletFrameData[self->subTypeId]);
     self->pose = BULLET_POSE_MOVING;
-    self->status |= ESTATUS_ABSOLUTE_POSITION;
+    self->status |= ESTATUS_ABSOLUTE_POSITION | ESTATUS_INVINCIBLE;
+    self->timer = BULLET_SPAWN_INVINCIBILITY_DURATION;
+
+    self->hitboxTop = -4;
+    self->hitboxBottom = 4;
+    self->hitboxLeft = -4;
+    self->hitboxRight = 4;
 }
 
 static void BulletMoving(struct Entity* self)
 {
+    if (self->timer != 0)
+    {
+        self->timer--;
+        if (self->timer == 0)
+        {
+            self->status &= ~ESTATUS_INVINCIBLE;
+        }
+    }
+
     switch (self->subTypeId)
     {
         case BULLET_RIGHT:

@@ -44,6 +44,11 @@ static void ShooterInit(struct Entity* self)
     {
         self->status |= ESTATUS_FACING_LEFT;
     }
+
+    self->hitboxTop = -16;
+    self->hitboxBottom = 16;
+    self->hitboxLeft = -16;
+    self->hitboxRight = 16;
 }
 
 static void ShooterComingIn(struct Entity* self)
