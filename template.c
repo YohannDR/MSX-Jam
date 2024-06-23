@@ -36,8 +36,6 @@ bool State_Pause();
 // Sprites by GrafxKid (https://opengameart.org/content/super-random-sprites)
 #include "content/data_sprt_layer.h"
 #include "content/data_sprt_ball.h"
-#include "content/data_bg.h"
-#include "content/data_map_gm2.h"
 #include "content/level.h"
 #include "content/tileset.h"
 
@@ -72,9 +70,9 @@ bool State_Initialize()
 	VDP_SetColor(COLOR_CYAN);
 	
 	// Initialize pattern
-	VDP_FillVRAM(32, g_ScreenLayoutLow, 0, 32*24);
-	VDP_FillVRAM(0, g_ScreenPatternLow, 0, 256*8); // Clear pattern
-	VDP_WriteVRAM(g_DataBackground, g_ScreenPatternLow, 0, 24*8);
+	//VDP_FillVRAM(32, g_ScreenLayoutLow, 0, 32*24);
+	//VDP_FillVRAM(0, g_ScreenPatternLow, 0, 256*8); // Clear pattern
+	//VDP_WriteVRAM(g_DataBackground, g_ScreenPatternLow, 0, 24*8);
 
 	VDP_SetLayoutTable(0x3800);
 	VDP_SetColorTable(0x2000);
@@ -92,8 +90,8 @@ bool State_Initialize()
 	*/
 
 	// Load tiles pattern
-	VDP_LoadPattern_GM2(sTilesetGfx, 94, 0);
-	VDP_LoadColor_GM2(g_DataMapGM2_Colors, 94, 0);
+	VDP_LoadPattern_GM2(Msx_Tileset_Patterns, 193, 0);
+	VDP_LoadColor_GM2(Msx_Tileset_Colors, 193, 0);
 
 	ScrollInit(sLevel);
 
