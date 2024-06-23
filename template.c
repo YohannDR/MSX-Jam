@@ -14,6 +14,7 @@
 #include "math.h"
 #include "debug.h"
 #include "string.h"
+#include "arkos/akg_player.h"
 
 #include "entity.h"
 #include "player1.h"
@@ -31,12 +32,14 @@ bool State_Pause();
 //=============================================================================
 
 // Fonts
-#include "font/font_carwar.h"
+// #include "font/font_carwar.h"
 // Sprites by GrafxKid (https://opengameart.org/content/super-random-sprites)
 #include "content/data_sprt_layer.h"
 #include "content/data_sprt_ball.h"
 #include "content/data_bg.h"
 #include "content/data_map_gm2.h"
+
+#include "content/lvl_music.h"
 
 //-----------------------------------------------------------------------------
 // Load pattern data into VRAM
@@ -74,11 +77,6 @@ bool State_Initialize()
 	VDP_SetSpritePatternTable(0x1800);
 	VDP_SetSpriteAttributeTable(0x3E00);
 
-	// Initialize text
-	Print_SetTextFont(g_Font_Carwar, 65);
-	Print_SetColor(0xF, 0x1);
-	Print_SetPosition(0, 0);
-
 	/*
 	// Initialize color
 	VDP_FillVRAM(0xF0, g_ScreenColorLow, 0, 32); // Clear color
@@ -107,6 +105,8 @@ bool State_Initialize()
 	//                    Source data              SprtID  Num
 	VDP_LoadSpritePattern(g_DataSprtBall,          4*4*14, 4*2*3);
 	// VDP_SetSpriteSM1(6, 0, 208, 0, 0); // hide
+
+	AKG_Init(sLevelMusic, 0);
 
 	EntitiesSetup();
 
@@ -143,6 +143,8 @@ bool State_Game()
 	PROFILE_FRAME_END();
 
 	Halt(); // Wait V-Blank
+
+	AKG_Decode();
 
 	ScrollUpdate();
 

@@ -31,7 +31,7 @@ ProjModules = [ ProjName ];
 // ProjSegments = "";
 
 //-- List of library modules to build (array)
-LibModules = [ "system", "bios", "vdp", "print", "input", "memory", "game", "game_pawn", "math", "string", "debug", "scroll" ];
+LibModules = [ "system", "bios", "vdp", "print", "input", "memory", "game", "game_pawn", "math", "string", "debug", "scroll", "arkos/akg_player" ];
 
 //-- Additional sources to be compiled and linked with the project (array)
 AddSources = [ "entity.c", "player1.c", "player2.c", "scrolling.c", "bullet.c", "shooter.c", "boomerang.c" ];
