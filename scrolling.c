@@ -23,20 +23,20 @@ void ScrollUpdate(void)
 {
     Scroll_Update();
 
-    if (Keyboard_IsKeyPressed(KEY_Q))
+    if (Keyboard_IsKeyPressed(KEY_F))
     {
         ScrollX(-1);
     }
-    else if (Keyboard_IsKeyPressed(KEY_D))
+    else if (Keyboard_IsKeyPressed(KEY_H))
     {
         ScrollX(1);
     }
 
-    if (Keyboard_IsKeyPressed(KEY_Z))
+    if (Keyboard_IsKeyPressed(KEY_T))
     {
         ScrollY(-1);
     }
-    else if (Keyboard_IsKeyPressed(KEY_S))
+    else if (Keyboard_IsKeyPressed(KEY_G))
     {
         ScrollY(1);
     }

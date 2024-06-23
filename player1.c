@@ -109,13 +109,13 @@ static void Player1HandleInputs(struct Entity* self)
         moving = TRUE;
     }
 
-    /*if (self->timer == 0 && Keyboard_IsKeyPressed(KEY_UP))
+    if (self->timer == 0 && Keyboard_IsKeyPressed(KEY_UP))
     {
         EntityInit(ENTITY_BULLET, BULLET_TOP, self->position.x, self->position.y);
         self->timer = PLAYER_SHOOT_DELAY;
-    }*/
+    }
 
-    if (Keyboard_IsKeyPressed(KEY_UP))
+    /*if (Keyboard_IsKeyPressed(KEY_UP))
     {
         self->position.y -= 2;
         moving = TRUE;
@@ -124,7 +124,7 @@ static void Player1HandleInputs(struct Entity* self)
     {
         self->position.y += 2;
         moving = TRUE;
-    }
+    }*/
 
     if (moving)
     {

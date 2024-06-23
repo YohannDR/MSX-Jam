@@ -140,6 +140,12 @@ static void EntitiesCheckCollisions(void)
             if (!(e2->status & ESTATUS_EXISTS))
                 continue;
 
+            if ((e1->entityId == ENTITY_PLAYER1 && e2->entityId == ENTITY_PLAYER2) ||
+                (e1->entityId == ENTITY_PLAYER2 && e2->entityId == ENTITY_PLAYER1))
+            {
+                continue;
+            }
+
             u16 e1Top = e1->position.y + e1->hitboxTop;
             u16 e1Bottom = e1->position.y + e1->hitboxBottom;
             u16 e1Left = e1->position.x + e1->hitboxLeft;

@@ -110,8 +110,9 @@ bool State_Initialize()
 
 	EntitiesSetup();
 
-	EntityInit(ENTITY_PLAYER1, 0, 80, 60);
-	EntityInit(ENTITY_SHOOTER, SHOOTER_VERTICAL, 0xF0, 20);
+	EntityInit(ENTITY_PLAYER1, 0, 128, 50);
+	EntityInit(ENTITY_PLAYER2, 0, 128, 40);
+	EntityInit(ENTITY_BOOMERANG, 0, 0xF8, 10);
 	// EntityInit(ENTITY_SHOOTER, SHOOTER_HORIZONTAL, 0, 0);
 
 	VDP_EnableDisplay(TRUE);
@@ -129,6 +130,8 @@ bool State_Initialize()
 bool State_Game()
 {
 	PROFILE_FRAME_START();
+
+	Keyboard_Update();
 
 	PROFILE_SECTION_START(S_UPDATE, 100);
 	EntitiesUpdate();
